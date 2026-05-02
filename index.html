@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Личный кабинет • Подготовка к экзаменам</title>
+    <meta
+      name="description"
+      content="Личный кабинет ученика для подготовки к экзаменам. Полностью фронтенд, готов для GitHub Pages."
+    />
+    <link rel="stylesheet" href="./styles.css?v=2" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Перейти к содержимому</a>
+
+    <header class="topbar">
+      <div class="topbar__inner">
+        <div class="brand">
+          <div class="brand__mark" aria-hidden="true">ED</div>
+          <div class="brand__text">
+            <div class="brand__title">Кабинет ученика</div>
+            <div class="brand__subtitle">Подготовка к экзаменам</div>
+          </div>
+        </div>
+
+        <div class="topbar__right">
+          <div class="clock" aria-label="Текущие дата и время">
+            <div class="clock__date" id="nowDate">—</div>
+            <div class="clock__time" id="nowTime">—</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container" id="main">
+      <div class="app-gate" id="appGate" hidden>
+        <div class="app-gate__card card">
+          <div class="card__header">
+            <div>
+              <div class="eyebrow">Доступ</div>
+              <h2 class="h2" id="appGateTitle">—</h2>
+            </div>
+          </div>
+          <p class="muted" id="appGateMessage"></p>
+        </div>
+      </div>
+
+      <div class="app-loader" id="appLoader" aria-live="polite">
+        <div class="app-loader__card">
+          <div class="app-loader__spinner" aria-hidden="true"></div>
+          <div class="app-loader__title">Данные загружаются</div>
+          <div class="app-loader__subtitle">Пожалуйста, подождите</div>
+        </div>
+      </div>
+      <div id="appShell">
+        <div
+          class="tabs"
+          id="subjectTabs"
+          aria-label="Переключение предмета"
+        ></div>
+
+        <section class="bento" aria-label="Панель ученика">
+          <article class="card card--hero" id="cardGreeting">
+            <div class="card__header">
+              <div>
+                <div class="eyebrow" id="greetingEyebrow">Дашборд</div>
+                <h1 class="h1" id="greetingTitle">Привет —</h1>
+              </div>
+              <div class="pill" id="subjectPill" title="Выбранный предмет">
+                —
+              </div>
+            </div>
+
+            <div class="hero__body">
+              <div class="hero-grid">
+                <div class="hero-progress">
+                  <div class="hero-progress__label">Прогресс</div>
+                  <div class="hero-progress__value" id="progressValue">—</div>
+                  <div
+                    class="progress__bar"
+                    role="progressbar"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  >
+                    <div
+                      class="progress__fill"
+                      id="progressFill"
+                      style="width: 0%"
+                    ></div>
+                  </div>
+                  <div class="hero-progress__meta">
+                    <span id="progressMetaLeft">—</span>
+                    <span class="muted" id="progressMetaRight"></span>
+                  </div>
+                </div>
+
+                <div class="hero-summary">
+                  <div class="kpi">
+                    <div class="kpi__label">Пройдено</div>
+                    <div class="kpi__value" id="heroCompleted">—</div>
+                  </div>
+                  <div class="kpi">
+                    <div class="kpi__label">В процессе</div>
+                    <div class="kpi__value" id="heroInProgress">—</div>
+                  </div>
+                  <div class="kpi">
+                    <div class="kpi__label">Сделать ДЗ</div>
+                    <div class="kpi__value" id="heroHomework">—</div>
+                  </div>
+                  <div class="kpi">
+                    <div class="kpi__label">Не начато</div>
+                    <div class="kpi__value" id="heroNotStarted">—</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="card card--exam" id="cardExam">
+            <div class="card__header">
+              <div>
+                <div class="eyebrow">Информация</div>
+                <h2 class="h2">Об экзамене</h2>
+              </div>
+            </div>
+
+            <div class="exam">
+              <div class="exam__row">
+                <div class="exam__label">Дата проведения</div>
+                <div class="exam__value" id="examDate">—</div>
+              </div>
+              <div class="exam__row">
+                <div class="exam__label">Осталось</div>
+                <div class="exam__value">
+                  <span class="countdown" id="examCountdown">—</span>
+                  <span class="muted" id="examCountdownSub">дней</span>
+                </div>
+              </div>
+              <div class="exam__row">
+                <div class="exam__label">Длительность</div>
+                <div class="exam__value" id="examDuration">—</div>
+              </div>
+              <div class="exam__row">
+                <div class="exam__label">Количество заданий</div>
+                <div class="exam__value" id="examTaskCount">—</div>
+              </div>
+            </div>
+          </article>
+
+          <article class="card card--tasks" id="cardTasks">
+            <div class="card__header">
+              <div>
+                <div class="eyebrow">План подготовки</div>
+                <h2 class="h2">Задания</h2>
+              </div>
+              <div class="filters" aria-label="Фильтры заданий">
+                <button class="chip is-active" type="button" data-filter="all">
+                  Все
+                </button>
+                <button class="chip" type="button" data-filter="not_started">
+                  Не начато
+                </button>
+                <button class="chip" type="button" data-filter="in_progress">
+                  В процессе
+                </button>
+                <button class="chip" type="button" data-filter="homework">
+                  Сделать ДЗ
+                </button>
+                <button class="chip" type="button" data-filter="completed">
+                  Пройдено
+                </button>
+              </div>
+            </div>
+
+            <div
+              class="tasks-grid"
+              id="tasksGrid"
+              aria-label="Карточки заданий"
+            >
+              <!-- rendered by JS -->
+            </div>
+          </article>
+        </section>
+      </div>
+    </main>
+
+    <div class="modal" id="modal" aria-hidden="true">
+      <div class="modal__overlay" data-close="true"></div>
+      <div
+        class="modal__dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalTitle"
+      >
+        <div class="modal__header">
+          <div>
+            <div class="modal__badge" id="modalBadge">—</div>
+            <h3 class="modal__title" id="modalTitle">—</h3>
+            <div class="modal__subtitle" id="modalSubtitle">—</div>
+          </div>
+          <button
+            class="icon-btn"
+            type="button"
+            id="modalClose"
+            aria-label="Закрыть окно"
+          >
+            Закрыть
+          </button>
+        </div>
+
+        <div class="modal__content" id="modalContent">
+          <!-- rendered by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- <footer class="footer">
+      <div class="footer__inner">
+        <span class="muted">Личный кабинет</span>
+        <span class="muted">Разработано • 2026</span>
+      </div>
+    </footer> -->
+
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="./firebase.config.js?v=2"></script>
+    <script src="./script.js?v=2" defer></script>
+  </body>
+</html>

@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Админка • Кабинет ученика</title>
+    <meta
+      name="description"
+      content="Админ-панель для создания и редактирования учеников в student-dashboard."
+    />
+    <link rel="stylesheet" href="./styles.css?v=2" />
+    <link rel="stylesheet" href="./admin.css?v=2" />
+  </head>
+  <body>
+    <div id="adminLoginOverlay" class="admin-login-overlay" hidden>
+      <div class="admin-login-card card">
+        <div class="card__header">
+          <div>
+            <div class="eyebrow">Доступ</div>
+            <h2 class="h2">Вход в админку</h2>
+          </div>
+        </div>
+        <div class="admin-form">
+          <p class="muted" style="margin: 0; font-size: 14px; line-height: 1.5;">
+            Войди через Google-аккаунт, чтобы продолжить.
+          </p>
+          <p id="adminGateError" class="admin-gate-error" hidden></p>
+          <button class="icon-btn google-signin-btn" type="button" id="googleSignInBtn">
+            <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true" style="flex-shrink:0">
+              <path fill="#4285F4" d="M44.5 20H24v8.5h11.7C34.2 33.4 29.7 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 2.9l6-6C34.5 6.5 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.6-8 19.6-20 0-1.3-.1-2.7-.1-4z"/>
+              <path fill="#34A853" d="M6.3 14.7l7 5.1C15 17.1 19.2 14 24 14c3.1 0 5.8 1.1 7.9 2.9l6-6C34.5 6.5 29.6 4 24 4c-7.7 0-14.4 4.4-17.7 10.7z"/>
+              <path fill="#FBBC05" d="M24 44c5.5 0 10.4-1.9 14.2-5l-6.6-5.4C29.6 35.3 27 36 24 36c-5.7 0-10.2-2.6-11.7-7.5l-7 5.4C8.5 40.3 15.7 44 24 44z"/>
+              <path fill="#EA4335" d="M44.5 20H24v8.5h11.7c-.8 2.2-2.2 4-4.1 5.3l6.6 5.4C41.7 36.2 44.6 30.5 44.6 24c0-1.3-.1-2.7-.1-4z"/>
+            </svg>
+            Войти через Google
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="adminAppRoot">
+      <a class="skip-link" href="#main">Перейти к содержимому</a>
+
+      <header class="topbar">
+        <div class="topbar__inner">
+          <div class="brand">
+            <div class="brand__mark" aria-hidden="true">💻</div>
+            <div class="brand__text">
+              <div class="brand__title">Панель управления</div>
+              <!-- <div class="brand__subtitle">Управление учениками</div> -->
+            </div>
+          </div>
+          <div class="topbar__right">
+            <button class="icon-btn" id="adminLogoutBtn" type="button" hidden>
+              Выйти из админки
+            </button>
+            <a
+              class="icon-btn"
+              href="./index.html"
+              style="text-decoration: none"
+              >Открыть дашборд</a
+            >
+          </div>
+        </div>
+        <div class="topbar__status-bar">
+          <div id="statusBox" class="admin-status muted">
+            Ожидание данных <span class="loader"></span>
+          </div>
+        </div>
+      </header>
+
+      <main class="container admin" id="main">
+
+        <!-- Вкладки страницы -->
+        <nav class="admin-page-tabs" aria-label="Разделы">
+          <button class="admin-page-tab is-active" type="button" data-page-tab="students">Ученики</button>
+          <button class="admin-page-tab" type="button" data-page-tab="templates">Шаблоны</button>
+          <button class="admin-page-tab" type="button" data-page-tab="database">База данных</button>
+        </nav>
+
+        <!-- ─── Панель: Ученики ─── -->
+        <div class="admin-tab-panel" data-page-panel="students">
+
+          <section class="card admin__card">
+            <div class="card__header">
+              <div>
+                <div class="eyebrow">Новый ученик</div>
+                <h1 class="h2">Создание ученика</h1>
+              </div>
+            </div>
+            <form id="createStudentForm" class="admin-form">
+              <label class="admin-field">
+                <span>Имя</span>
+                <input id="createName" type="text" required />
+              </label>
+              <div class="admin-field">
+                <span>Предметы</span>
+                <div id="createSubjects" class="subject-checks"></div>
+              </div>
+              <button class="icon-btn" type="submit">Создать ученика</button>
+            </form>
+          </section>
+
+          <section class="card admin__card">
+            <div class="card__header">
+              <div>
+                <div class="eyebrow">Текущие ученики</div>
+                <h2 class="h2">Список</h2>
+              </div>
+            </div>
+            <div id="studentsList" class="students-list"></div>
+          </section>
+
+          <section class="card admin__card">
+            <div class="card__header">
+              <div>
+                <div class="eyebrow">Редактирование</div>
+                <h2 class="h2">Данные ученика</h2>
+              </div>
+            </div>
+            <form id="editStudentForm" class="admin-form" hidden>
+              <label class="admin-field">
+                <span>Имя</span>
+                <input id="editName" type="text" required />
+              </label>
+              <label class="admin-field">
+                <span>Статус доступа</span>
+                <select id="editActive">
+                  <option value="true">Активен</option>
+                  <option value="false">Архив (доступ закрыт)</option>
+                </select>
+              </label>
+              <div class="admin-field">
+                <span>Токен ссылки</span>
+                <div class="token-row">
+                  <code id="editToken">—</code>
+                  <button class="icon-btn" id="copyLinkBtn" type="button">
+                    Копировать ссылку
+                  </button>
+                </div>
+              </div>
+              <div class="admin-field">
+                <span>Предметы ученика</span>
+                <div id="editSubjects" class="subject-checks"></div>
+              </div>
+              <div class="admin-field">
+                <span>Параметры экзамена по предметам</span>
+                <div id="subjectSettings" class="subject-settings"></div>
+              </div>
+              <button class="icon-btn" type="submit">Сохранить изменения</button>
+              <div class="danger-zone">
+                <button class="icon-btn danger" id="archiveBtn" type="button">
+                  Переключить архив/активен
+                </button>
+                <button class="icon-btn danger" id="deleteStudentBtn" type="button">
+                  Удалить ученика
+                </button>
+              </div>
+            </form>
+            <p id="emptyEditHint" class="muted admin-empty">
+              Выбери ученика из списка, чтобы редактировать данные.
+            </p>
+          </section>
+
+          <section class="card admin__card">
+            <div class="card__header">
+              <div>
+                <div class="eyebrow">Задания</div>
+                <h2 class="h2">Редактирование по предметам</h2>
+              </div>
+            </div>
+            <div id="tasksEditor" class="tasks-editor">
+              <p class="muted admin-empty">
+                Выбери ученика, затем предмет — здесь появятся все задания для редактирования.
+              </p>
+            </div>
+          </section>
+
+        </div><!-- /panel students -->
+
+        <!-- ─── Панель: Шаблоны ─── -->
+        <div class="admin-tab-panel" data-page-panel="templates" hidden>
+
+          <section class="card admin__card">
+            <div class="card__header">
+              <div>
+                <div class="eyebrow">Шаблоны заданий</div>
+                <h2 class="h2">Заполнение шаблонов</h2>
+              </div>
+              <button class="icon-btn" type="button" id="loadTemplatesBtn">Загрузить шаблоны</button>
+            </div>
+            <p class="muted admin-empty" style="margin: 0 18px 14px;">
+              Заполни описание, конспект и подсказки. Данные подтянутся к ученикам при добавлении предмета.
+            </p>
+            <div id="templatesEditor" class="tasks-editor"></div>
+          </section>
+
+        </div><!-- /panel templates -->
+
+        <!-- ─── Панель: База данных ─── -->
+        <div class="admin-tab-panel" data-page-panel="database" hidden>
+
+          <section class="card admin__card">
+            <div class="card__header">
+              <div>
+                <div class="eyebrow">Данные</div>
+                <h2 class="h2">Каталог и шаблоны</h2>
+              </div>
+            </div>
+            <div class="admin-form">
+              <p class="muted" style="margin: 0; font-size: 13px;">
+                Создаёт 4 предмета (<code>subject_catalog</code>) и шаблоны заданий (<code>task_templates</code>). Данные учеников не затрагиваются.
+              </p>
+              <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="icon-btn" type="button" id="checkBtn">Проверить состояние</button>
+                <button class="icon-btn" type="button" id="seedBtn">Заполнить базу</button>
+                <button class="icon-btn danger" type="button" id="resetBtn">Сбросить и пересоздать</button>
+              </div>
+              <div class="setup-log" id="setupLog">Нажми «Проверить состояние» чтобы начать…</div>
+            </div>
+          </section>
+
+          <section class="card admin__card">
+            <div class="card__header">
+              <div>
+                <div class="eyebrow">Яндекс Диск</div>
+                <h2 class="h2">Синхронизация файлов</h2>
+              </div>
+              <button class="icon-btn" type="button" id="yadiskSyncBtn">Синхронизировать</button>
+            </div>
+            <div class="admin-form">
+              <p class="muted" style="margin: 0; font-size: 13px;">
+                Сканирует папку <code id="yadiskRootLabel">/Ученики</code> на Яндекс Диске,
+                делает файлы публичными и прикрепляет ссылки к заданиям.<br />
+                Структура: <code>/{Имя ученика}/{Предмет}/Задание N.pdf</code>.
+                Инструкция по настройке — в файле <code>yadisk-worker.js</code>.
+              </p>
+              <div class="setup-log" id="yadiskLog" style="min-height: 60px;">Нажми «Синхронизировать» чтобы начать…</div>
+            </div>
+          </section>
+
+          <section class="card admin__card">
+            <div class="card__header">
+              <div>
+                <div class="eyebrow">Безопасность</div>
+                <h2 class="h2">Правила Firestore</h2>
+              </div>
+              <button class="icon-btn" type="button" id="copyRulesBtn">Скопировать</button>
+            </div>
+            <p class="muted admin-empty" style="margin: 0 18px 12px;">
+              Вставь в Firebase Console → Firestore Database → Rules → Publish:
+            </p>
+            <div style="padding: 0 18px 18px;">
+              <pre class="rules-block" id="rulesBlock">rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Каталог предметов — читают все, пишут только авторизованные
+    match /subject_catalog/{docId} {
+      allow read: if true;
+      allow create, update: if request.auth != null
+        &amp;&amp; request.resource.data.keys().hasAll(['title', 'slug', 'sort_order']);
+      allow delete: if request.auth != null;
+    }
+
+    // Шаблоны заданий — читают все, пишут только авторизованные
+    match /task_templates/{docId} {
+      allow read: if true;
+      allow create, update: if request.auth != null
+        &amp;&amp; request.resource.data.keys().hasAll(['catalog_id', 'title', 'order_index']);
+      allow delete: if request.auth != null;
+    }
+
+    // Ученики — читают все (поиск по токену ?k=TOKEN), пишут только авторизованные
+    match /users/{userId} {
+      allow read: if true;
+      allow create: if request.auth != null
+        &amp;&amp; request.resource.data.keys().hasAll(['name', 'access_token', 'is_active']);
+      allow update, delete: if request.auth != null;
+    }
+
+    // Предметы ученика
+    match /users/{userId}/subjects/{subjectId} {
+      allow read: if true;
+      allow create, update: if request.auth != null
+        &amp;&amp; request.resource.data.keys().hasAll(['catalog_id', 'title']);
+      allow delete: if request.auth != null;
+    }
+
+    // Задания ученика
+    match /users/{userId}/subjects/{subjectId}/tasks/{taskId} {
+      allow read: if true;
+      allow create, update: if request.auth != null
+        &amp;&amp; request.resource.data.keys().hasAll(['title', 'status']);
+      allow delete: if request.auth != null;
+    }
+  }
+}</pre>
+            </div>
+          </section>
+
+        </div><!-- /panel database -->
+
+      </main>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="./firebase.config.js?v=2"></script>
+    <script src="./admin.js?v=2" defer></script>
+  </body>
+</html>
